@@ -45,7 +45,8 @@ partial class WarbasePlayer : Player
 
 		SupressPickupNotices = true;
 
-		Inventory.Add( new Pistol(), true );
+		Inventory.Add( new ETool(), true );
+		// Inventory.Add( new Pistol(), true );
 		Inventory.Add( new Shotgun() );
 		Inventory.Add( new SMG() );
 		Inventory.Add( new Crossbow() );

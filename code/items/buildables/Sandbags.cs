@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 
 using Sandbox;
 
-namespace Warbase
+namespace Warbase.Buildables
 {
 	[Library]
-	public partial class BSandbags : BuildableItem
+	public partial class Sandbags : BuildableItem
 	{
+		// Descriptive
 		public override string Name => "Sandbags";
 		public override string UniqueId => "buildable.sandbags";
 		public override string Description => "Waist-high stacks of bags of sand and dirt. Literally dirt cheap, and effective against bullets.";
 		public override string ModelPath => "models/rust_props/barricades/barricade.sandbags.vmdl_c";
-		public override float MaxHealth => 250f;
 
+		// Attributes
+		public override float MaxHealth => 150f;
+		public override float RequiredProgress => 100f;
 		public override Dictionary<DamageFlags, float> Resistances => new()
 		{
-			[DamageFlags.Bullet] = 0.25f,
+			[DamageFlags.Bullet] = 0.5f,
 		};
 
 	}

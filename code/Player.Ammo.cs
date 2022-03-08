@@ -18,6 +18,7 @@ partial class WarbasePlayer
 		var iType = (int)type;
 		if ( Ammo == null ) return 0;
 		if ( Ammo.Count <= iType ) return 0;
+		if ( type == AmmoType.None ) return 0;
 
 		return Ammo[(int)type];
 	}
@@ -26,7 +27,7 @@ partial class WarbasePlayer
 	{
 		var iType = (int)type;
 		if ( !Host.IsServer ) return false;
-		if ( Ammo == null ) return false;
+		if ( Ammo == null || type == AmmoType.None ) return false;
 
 		while ( Ammo.Count <= iType )
 		{
@@ -40,7 +41,7 @@ partial class WarbasePlayer
 	public bool GiveAmmo( AmmoType type, int amount )
 	{
 		if ( !Host.IsServer ) return false;
-		if ( Ammo == null ) return false;
+		if ( Ammo == null || type == AmmoType.None ) return false;
 
 		SetAmmo( type, AmmoCount( type ) + amount );
 		return true;
@@ -48,7 +49,7 @@ partial class WarbasePlayer
 
 	public int TakeAmmo( AmmoType type, int amount )
 	{
-		if ( Ammo == null ) return 0;
+		if ( Ammo == null || type == AmmoType.None ) return 0;
 
 		var available = AmmoCount( type );
 		amount = Math.Min( available, amount );
@@ -60,6 +61,7 @@ partial class WarbasePlayer
 
 public enum AmmoType
 {
+	None, // Special ammo type that doesn't have ammo or whatever
 	Pistol,
 	Buckshot,
 	Crossbow

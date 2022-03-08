@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using System.Collections.Generic;
 
 partial class BaseDmWeapon : BaseWeapon, IRespawnableEntity
 {
@@ -58,7 +59,7 @@ partial class BaseDmWeapon : BaseWeapon, IRespawnableEntity
 		if ( IsReloading )
 			return;
 
-		if ( AmmoClip >= ClipSize )
+		if ( ClipSize < 0 || AmmoClip >= ClipSize )
 			return;
 
 		TimeSinceReload = 0;
@@ -136,6 +137,22 @@ partial class BaseDmWeapon : BaseWeapon, IRespawnableEntity
 		CrosshairPanel?.CreateEvent( "fire" );
 	}
 
+	public override IEnumerable<TraceResult> TraceBullet( Vector3 start, Vector3 end, float radius = 2.0f )
+	{
+		bool InWater = Map.Physics.IsPointWater( start );
+
+		var tr = Trace.Ray( start, end )
+				.UseHitboxes()
+				.HitLayer( CollisionLayer.Water, !InWater )
+				.HitLayer( CollisionLayer.Debris )
+				.Ignore( Owner )
+				.Ignore( this )
+				.Size( radius )
+				.Run();
+
+		yield return tr;
+	}
+
 	/// <summary>
 	/// Shoot a single bullet
 	/// </summary>
@@ -175,6 +192,9 @@ partial class BaseDmWeapon : BaseWeapon, IRespawnableEntity
 
 	public bool TakeAmmo( int amount )
 	{
+		if ( ClipSize < 0 )
+			return true;
+
 		if ( AmmoClip < amount )
 			return false;
 
