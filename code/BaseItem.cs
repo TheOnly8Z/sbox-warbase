@@ -10,6 +10,7 @@ namespace Warbase
 	{
 		public uint NetworkId { get; set; }
 		public virtual string Name => "";
+		public virtual string Description => "";
 		public virtual string Entity => "";
 		public virtual string UniqueId => "";
 

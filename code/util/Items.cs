@@ -50,6 +50,22 @@ namespace Warbase
 			}
 		}
 
+		public static BuildableEntity Create( Player player, BuildableItem item )
+		{
+			Host.AssertServer();
+
+			BuildableEntity entity;
+
+			if ( string.IsNullOrEmpty( item.Entity ) )
+				entity = new BuildableEntity();
+			else
+				entity = Library.Create<BuildableEntity>( item.Entity );
+
+			entity.Assign( player, item );
+
+			return entity;
+		}
+
 		public static T Find<T>( string id ) where T : BaseItem
 		{
 			if ( Table.TryGetValue( id, out var item ) )

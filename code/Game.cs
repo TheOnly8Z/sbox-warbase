@@ -2,6 +2,8 @@
 using System;
 using System.Linq;
 
+using Warbase;
+
 /// <summary>
 /// This is the heart of the gamemode. It's responsible
 /// for creating the player and stuff.
@@ -20,7 +22,7 @@ partial class DeathmatchGame : Game
 			new DeathmatchHud();
 		}
 
-		
+		Items.Initialize();
 	}
 
 	public override void PostLevelLoaded()

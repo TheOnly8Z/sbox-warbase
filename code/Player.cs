@@ -134,6 +134,25 @@ partial class WarbasePlayer : Player
 		}
 	}
 
+	public void MakeBuilding()
+	{
+		if ( !IsServer || !InBuildMode || _selected == null ) return;
+
+		BuildableEntity buildable;
+		buildable = Items.Create(this, _selected);
+		var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 500 )
+					.Ignore( this )
+					.Ignore( BuildPreview )
+					.Run();
+		var pos = tr.EndPosition; // .SnapToGrid( PreviewGridSize );
+		var tr2 = Trace.Ray( pos + Vector3.Up * 4f, pos + Vector3.Down * 100f )
+					.Ignore( this )
+					.Ignore( BuildPreview )
+					.Run();
+		buildable.Position = tr2.EndPosition;
+		buildable.Rotation = Rotation.FromYaw( PreviewYawOffset );
+	}
+
 	public override void Simulate( Client cl )
 	{
 		//if ( cl.NetworkIdent == 1 )
@@ -189,6 +208,17 @@ partial class WarbasePlayer : Player
 
 		if ( InBuildMode )
 		{
+
+			if ( Input.Pressed( InputButton.Attack1 ) )
+			{
+				MakeBuilding();
+			} else if ( Input.Pressed( InputButton.Slot1 ) )
+			{
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.chainfence" ) );
+			} else if ( Input.Pressed( InputButton.Slot2 ) )
+			{
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.sandbags" ) );
+			}
 
 			var angDiff = Input.Down( InputButton.Walk ) ? 5f : 15f;
 			if ( Input.Down( InputButton.SlotNext ) || Input.MouseWheel > 0 )

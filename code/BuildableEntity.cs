@@ -15,7 +15,7 @@ public enum BuildableState
 
 namespace Warbase
 {
-	public partial class BuildableEntity<T> : AnimEntity where T : BuildableItem
+	public partial class BuildableEntity : ItemEntity<BuildableItem>
 	{
 
 		private static Color _colorBlueprint = new Color( 1, 1, 1, 0.3f );
@@ -23,30 +23,26 @@ namespace Warbase
 		public BuildableState BuildableState;
 		public float Progress; // max is Item.RequiredProgress
 
-		[Net, Change] public uint ItemNetworkId { get; private set; }
-
-		private T _itemCache;
-		public T Item
+		public BuildableEntity() : base()
 		{
-			get
-			{
-				if ( _itemCache == null )
-					_itemCache = Items.Find<T>( ItemNetworkId );
-				return _itemCache;
-			}
+
 		}
 
-		public BuildableEntity()
+		protected override void OnItemChanged( BuildableItem item, BuildableItem oldItem )
 		{
 			SetModel( Item.ModelPath );
+			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
 
-			Health = 1f;
+			if ( oldItem == null )
+			{
+				Health = 1f;
+				BuildableState = BuildableState.Blueprint;
+				Progress = 0f;
+				RenderColor = _colorBlueprint;
 
-			BuildableState = BuildableState.Blueprint;
-			Progress = 0f;
-			RenderColor = _colorBlueprint;
-
-			MoveType = MoveType.None;
+				CollisionGroup = item.CollisionGroup;
+				MoveType = item.MoveType;
+			}
 		}
 
 		public void ProgressBuilding(float progressPower)
