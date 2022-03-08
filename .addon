@@ -1,0 +1,15 @@
+{
+  "Title": "Warbase",
+  "Type": "game",
+  "Org": "octzed",
+  "Ident": "sbox-warbase",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "ResourcePaths": [
+    "/ui/*"
+  ],
+  "HasCode": true,
+  "CodePath": "code",
+  "RootNamespace": "Sandbox"
+}
