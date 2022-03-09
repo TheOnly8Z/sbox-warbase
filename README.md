@@ -7,16 +7,17 @@ We want to preserve these factors of BaseWars:
 
 
 
-* An idle-game-like progression over time
-* High tension but low stake battles between player factions
-* Creative base building and defense strategies
+* An idle-game-like progression system
+* High tension but low stake battles between players
+* Creative base building and raiding strategies
 
-We want to improve on these factors of BaseWars:
+We want to improve upon these factors compared to BaseWars:
 
 
 
+* Give players a clear sense of progression
 * Encourage players to leave their base more by adding incentives
-* Make combat fairer and more fun
+* Make combat more fair and more fun
 * Create endgame goals and content
 
 
@@ -29,19 +30,19 @@ The old BaseWars only relied on money and power. In order to encourage more base
 
 
 * **Money** is your main liquid currency used to buy things off-map, stored in your account. It is also spent when building things.
-* **Supply** is what you use to build things. They are _physical objects_ that you must call in with airdrops or be produced. There are three tiers of supplies, basic, advanced and experimental.
+* **Supply** is what you use to build things. They are *physical containers* that you must call in with airdrops or be produced. There are three tiers of supplies, basic, advanced and experimental.
 * **Energy** is produced by generators and used by machines. They are _non-physical_, stored in generators and batteries. Most things must be supplied with energy by being in range of a generator. Generators close to one another form a network to share energy with, and batteries can boost energy storage.
 
-***Secondary*** resources are directly gathered, and can be used to produce or boost production of primary resources. They can be stored in depots or on the player.
+***Secondary*** resources are directly gathered, and can be used to produce or boost production of primary resources. They can be stored in depots, as physical containers, or on the player.
 
 
 
 * **Scrap** is a common resource used to make basic **Supplies**. It can be found lying around at scrap deposits.
-* **Metal** is harvested by mining machines from certain areas of the map. It is rarer than scrap, and can be used to create **Advanced Supplies**.
+* **Metal** is harvested by mining machines from certain areas of the map. It is rarer than scrap, and can be used to create advanced **Supplies**.
 * **Oil** is also harvested from specific areas on the map, but depletes over time. It can be used in generators to enhance **Energy **production.
 * **Uranium** is mined from deposits. It can be used in high-tier generators to enhance **Energy **production.
 * **Coolant** is gathered from tanks around the map or using mining machines. It is used to temporarily boost production of **Money**.
-* **Parts** rarely spawn around the map, and can be used to permanently boost production of **Money** through upgrades**.**
+* **Parts** rarely spawn around the map, and can be used to permanently boost production of **Money** through upgrades.
 
 There is one special resource, **Stardust**, that falls from the sky rarely. Stardust can be used to create experimental **supplies**, boost production of **energy**, or sold for a large sum of **money**.
 
@@ -87,13 +88,13 @@ To raid an enemy player, the attacker must first own a Satellite Uplink machine,
 
 
 * Owns at least one claim beacon;
-* Not actively being raided by other attackers;
-* Not raided for some time (10 minutes);
+* Is not actively being raided by other attackers;
+* Has not raided for some time (10 minutes);
 * Have at most one less player than the attacker;
 * Has earned a minimum amount of money;
 * Has a base value exceeding a threshold.
 
-During a raid, attackers are able to damage defenses the defenders own. They can use the blowtorch to slowly destroy any defense. Explosives can also damage defenses, but bullets can only effectively damage machines. Destroying a machine gives the attacker a portion (75%) of its monetary value.
+During a raid, attackers are able to damage defenses the defenders own. They can use the blowtorch to slowly destroy any defense. Some defenses are bullet resistant, but blast damage is effective against almost all buildables. Destroying a machine gives the attacker a portion (75%) of its monetary value.
 
 Defenders can also damage defenses the attackers own, but they do 50% less damage. They can choose to launch a counter-raid (same process as raiding normally) which will cancel out this penalty.
 
@@ -190,16 +191,16 @@ All Tier 0 buildings can be made using the E-Tool.
 
 
 
-* **Sandbags**: Waist-high stacks of bags of sand/dirt. Dirt cheap (literally) and quick to build.
-* **Fences**: See-through and shoot-through barriers. Cheap and quick, but easily destroyed by explosives.
-* **Fence gates**: A cheap and large gate that blocks access.
+* **Sandbags**: Waist-high stacks of bags of sand/dirt. Dirt cheap and bullet resistant.
+* **Fences**: See-through barriers. Cheap and quick to build, but easily destroyed.
+* **Fence Gate/Door**: A see-through gate and door that blocks access.
 
 
 #### Tier 1
 
 
 
-* **Bastions**: Chest high stackable blocks of sand. Slow to build but somewhat durable. Uses basic supplies.
+* **Bastions**: Neck high stackable blocks of sand. Slow to build but somewhat durable. Uses basic supplies.
 * **Razor Wire**: Deployable spools of razor wire that slow and deal damage to enemies that walk through them.
 
 
@@ -207,7 +208,8 @@ All Tier 0 buildings can be made using the E-Tool.
 
 
 
-* **T-Walls**: Tall concrete barriers. Expensive, but relatively fast to build and durable.  Uses advanced supplies.
+* **Barriers**: Waist-high concrete barriers providing good cover. Uses advanced supplies.
+* **T-Walls**: Tall concrete barriers. Expensive, but relatively fast to build and durable. Uses advanced supplies.
 * **Watch Tower**: Tower that can be built in the open. Armored from light weapons fire.
 
 
@@ -230,7 +232,7 @@ These buildables are vital to sustaining and developing a base.
 
 * **Claim Beacon**: Deployable that prevents other players from building in its radius.
 * **Supply Depot**: Area for supplies or secondary resources to be stored. Built using E-Tool.
-* **Nano-Printer**: 3D printing machine able to produce gear and small machines. Can be ordered for airdrop. Required for Tier 1 buildings.
+* **Nano-Printer**: 3D printing machine able to produce gear and small machines. Can be ordered for airdrop. Required to make Tier 1 buildings.
 
 
 #### Tier 1:
@@ -287,13 +289,13 @@ These buildables are vital to sustaining and developing a base.
 
 * **Fission Reactor**: Large machine that produces huge amounts of power, boostable with uranium. Requires advanced supplies.
 * **Wind Turbine**: Huge machine that produces power using wind. Production depends on the amount of clearance the blades have.
-* **Battery Array**: Stores a large amount of energy.
+* **Ion Battery**: Stores a large amount of energy.
 
 
 #### Tier 3:
 
 
-
+* **Fusion Reactor**: Large machine that produces incredible amounts of power, boostable with uranium. Requires a lot of advanced supplies.
 * **Singularity Reactor**: Produces the most amount of energy, boostable with stardust. Requires experimental supplies.
 * **Black Hole Battery**: Stores a massive amount of energy.
 
@@ -318,7 +320,7 @@ These buildables are vital to sustaining and developing a base.
 
 
 
-* **Reserve Printer**: A special money printer powered by an internal nuclear battery. It costs no power and is absolutely free (you keep it on you in case of an emergency), but you can only ever have one.
+* **Reserve Printer**: A special deployable money printer powered by an internal nuclear battery. It costs no power and is absolutely free (you keep it on you in case of an emergency), but you can only ever have one.
 
 
 #### Tier 1:
@@ -343,8 +345,8 @@ These buildables are vital to sustaining and developing a base.
 
 
 
-* **Mass Fabricator**: Consumes huge amounts of energy to generate random resources, even stardust.
-* **Merchant Teleporter**: Sells your goods directly via a teleportation device. Consumes large amounts of energy in doing so.
+* **Mass Fabricator**: Consumes huge amounts of energy to generate random resources, include stardust.
+* **Merchant Teleporter**: Sells your goods directly via a teleportation device. Consumes energy to doing so.
 * **Mineral Materializer**: Remateralize minerals straight out of the ground. Extremely efficient but consumes a large amount of energy.
 * **Liquid Materializer**: Remateralize liquid deposits right into our tanks. Extremely efficient but consumes a large amount of energy.
 
