@@ -62,7 +62,7 @@ partial class ETool : BaseDmWeapon
 			{
 				var buildable = tr.Entity as BuildableEntity;
 				var item = buildable.Item;
-				if (item.Tier == BuildableTier.Tier0)
+				if (item.HasFlag(BuildableFlags.EToolBuildable))
 				{
 					buildable.ProgressBuilding( 25f );
 				}

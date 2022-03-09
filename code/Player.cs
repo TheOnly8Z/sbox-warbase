@@ -244,7 +244,7 @@ partial class WarbasePlayer : Player
 				PreviewYawOffset = PreviewYawOffset - angDiff;
 			}
 
-			if ( IsClient && BuildPreview != null && BuildPreview.IsValid() )
+			if ( IsClient && _selected != null && BuildPreview != null && BuildPreview.IsValid() )
 			{
 				var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * BuildingHelper.MaxPlacementDistance )
 							.Ignore( this )

@@ -20,6 +20,7 @@ namespace Warbase
 		NotOnGround		= 4,
 		NearbyBeacon	= 8,
 		CannotStack		= 16,
+		TooSteep		= 32,
 	}
 
 	public struct PlacementInfo
@@ -37,8 +38,19 @@ namespace Warbase
 		public static float MaxPlacementDistance = 200f;
 		public static BBox EmptyBBox = new BBox( Vector3.Zero );
 
+		public static Sweeper Sweeper;
+
 		public static PlacementInfo TrySuitablePlacement(Player player, BuildableItem item, Vector3 pos, Rotation rot)
 		{
+
+			if ( Sweeper == null || !Sweeper.IsValid() )
+			{
+				Sweeper = new Sweeper();
+			}
+			Sweeper.SetModel( item.Model.Name );
+			Sweeper.SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
+
+
 			PlacementInfo placementInfo = new();
 			placementInfo.item = item;
 			placementInfo.flags = PlacementFlags.Suitable;
@@ -49,18 +61,34 @@ namespace Warbase
 				box = item.Model.PhysicsBounds;
 			}
 
-			// Drop the position on the ground
-			var tr = Trace.Ray( pos, pos + Vector3.Down * 1000 )
-						.Size(box)
-						.Run();
-			pos = tr.EndPosition;
+			var raise = 8f;
+			// Raise the bbox by a little so slight elevation doesn't ruin the placement
+			box.Mins = box.Mins.WithZ( box.Mins.z + raise );
 
-			// TODO: Hull trace that actually uses rotation
+			// Drop the position on the ground
+			var tr = Trace.Ray( pos + Vector3.Up * raise, pos + Vector3.Down * 1000 )
+						.Ignore( Sweeper )
+						.Run();
+			pos = tr.EndPosition; // + Vector3.Up * raise;
+
+			// Is the trace too steep?
+			if ( tr.Normal.Dot( Vector3.Up ) < 0.75f )
+			{
+				placementInfo.flags |= PlacementFlags.TooSteep;
+			}
 
 			// Did the trace find something we are not supposed to be building upon? (Only the world and buildables with the CanStackBuildables flag are ok)
 			if ( tr.Hit && !tr.Entity.IsWorld && ( !(tr.Entity is BuildableEntity) || !(tr.Entity as BuildableEntity).Item.HasFlag(BuildableFlags.CanStackBuildables) ) )
 			{
 				placementInfo.flags |= PlacementFlags.CannotStack;
+			}
+
+			// Does the sweeper (a trigger ModelEntity) detect any colliding models?
+			Sweeper.Position = pos;
+			Sweeper.Rotation = rot;
+			if (!Sweeper.Check())
+			{
+				placementInfo.flags |= PlacementFlags.BlockedByObject;
 			}
 
 			// TODO: check if building is near non-friendly beacon
@@ -73,8 +101,6 @@ namespace Warbase
 
 			placementInfo.pos = pos;
 			placementInfo.rot = rot;
-
-			Log.Info( placementInfo.flags );
 
 			return placementInfo;
 		}
