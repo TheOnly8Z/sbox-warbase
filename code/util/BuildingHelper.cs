@@ -16,11 +16,13 @@ namespace Warbase
 	{
 		Suitable		= 0,
 		TooFarAway		= 1,
-		BlockedByObject = 2,
+		Obstruction		= 2,
 		NotOnGround		= 4,
-		NearbyBeacon	= 8,
+		BlockedByBeacon	= 8,
 		CannotStack		= 16,
 		TooSteep		= 32,
+		NeedBuilding	= 64,
+		NeedSnapPoint	= 128,
 	}
 
 	public struct PlacementInfo
@@ -42,24 +44,11 @@ namespace Warbase
 
 		public static PlacementInfo TrySuitablePlacement(Player player, BuildableItem item, Vector3 pos, Rotation rot)
 		{
-
-			if ( Sweeper == null || !Sweeper.IsValid() )
-			{
-				Sweeper = new Sweeper();
-			}
-			Sweeper.SetModel( item.Model.Name );
-			Sweeper.SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
-
+			BBox box = item.Model.PhysicsBounds;
 
 			PlacementInfo placementInfo = new();
 			placementInfo.item = item;
 			placementInfo.flags = PlacementFlags.Suitable;
-
-			BBox box = item.PlacementBBox;
-			if ( box == EmptyBBox )
-			{
-				box = item.Model.PhysicsBounds;
-			}
 
 			var raise = 8f;
 			// Raise the bbox by a little so slight elevation doesn't ruin the placement
@@ -84,11 +73,18 @@ namespace Warbase
 			}
 
 			// Does the sweeper (a trigger ModelEntity) detect any colliding models?
+			if ( Sweeper == null || !Sweeper.IsValid() )
+			{
+				Sweeper = new Sweeper();
+			}
+			Sweeper.SetModel( item.Model.Name );
+			// Sweeper.SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
+			Sweeper.SetupPhysicsFromOBB( PhysicsMotionType.Static, box.Mins - item.SizeShrink / 2, box.Maxs + item.SizeShrink / 2);
 			Sweeper.Position = pos;
 			Sweeper.Rotation = rot;
 			if (!Sweeper.Check())
 			{
-				placementInfo.flags |= PlacementFlags.BlockedByObject;
+				placementInfo.flags |= PlacementFlags.Obstruction;
 			}
 
 			// TODO: check if building is near non-friendly beacon

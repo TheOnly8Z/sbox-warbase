@@ -28,6 +28,21 @@ namespace Warbase
 
 		}
 
+		/*
+		[Event.Tick]
+		private void Tick()
+		{
+			Log.Info( Item );
+			if ( Item != null )
+			{
+				foreach ( SnapPoint snapPoint in Item.SnapPoints )
+				{
+					DebugOverlay.Sphere( Transform.PointToWorld( snapPoint.Position ), 4f, Color.Green );
+				}
+			}
+		}
+		*/
+
 		protected override void OnItemChanged( BuildableItem item, BuildableItem oldItem )
 		{
 			SetModel( Item.Model.Name );

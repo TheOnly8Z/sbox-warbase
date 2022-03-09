@@ -30,6 +30,47 @@ namespace Warbase
 		/// If set, other buildables are allowed to be built on top of this buildable.
 		/// </summary>
 		CanStackBuildables	= 2,
+		/// <summary>
+		/// If set, buildable cannot be placed unless it is snapping to an existing structure
+		/// </summary>
+		MustSnap			= 4,
+	}
+
+	/// <summary>
+	/// Flags used by SnapPoint structs to denote what kind of points can snap to it.
+	/// </summary>
+	[Flags]
+	public enum SnapFlags
+	{
+		None = 0,
+		/// <summary>
+		/// Edges of a wall at its feet, used by walls to snap to one another
+		/// </summary>
+		WallEdge = 1,
+		/// <summary>
+		/// Center of a wall, used by foundations to snap to walls
+		/// </summary>
+		WallCenter = 2,
+		/// <summary>
+		/// Swivel point of a door, used by door frames and doors
+		/// </summary>
+		DoorHinge = 4,
+		/// <summary>
+		/// Edges of a square machine, used to align machines to each other
+		/// </summary>
+		MachineEdge = 8,
+	}
+
+	public readonly struct SnapPoint
+	{
+		public SnapPoint(SnapFlags flags, Vector3 pos)
+		{
+			Flags = flags;
+			Position = pos;
+		}
+
+		public SnapFlags Flags { get; }
+		public Vector3 Position { get; }
 	}
 
 	public partial class BuildableItem : BaseItem
@@ -66,10 +107,13 @@ namespace Warbase
 		public virtual int Skin => 0;
 		public virtual CollisionGroup CollisionGroup => CollisionGroup.Always;
 		/// <summary>
-		/// The bounding box used to determine building suitability. If value is equal to BuildingHelper.EmptyBBox, uses model bounding box.
-		/// For some models like sandbags, making the model clip a little may allow for better looking builds.
+		/// When checking building placement, shrink the bounding box of the model by this much. 
 		/// </summary>
-		public virtual BBox PlacementBBox => BuildingHelper.EmptyBBox;
+		public virtual Vector3 SizeShrink => Vector3.Zero;
+		/// <summary>
+		/// A list of snapping points the building has.
+		/// </summary>
+		public virtual List<SnapPoint> SnapPoints => new();
 
 		// Functions
 		public bool HasFlag( BuildableFlags flags ) => Flags.HasFlag( flags );

@@ -223,16 +223,25 @@ partial class WarbasePlayer : Player
 
 		if ( InBuildMode )
 		{
-
+			// TODO: actual buildable selection screen
 			if ( Input.Pressed( InputButton.Attack1 ) )
 			{
 				MakeBuilding();
 			} else if ( Input.Pressed( InputButton.Slot1 ) )
 			{
-				SelectBuildable( Items.Find<BuildableItem>( "buildable.chainfence" ) );
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.sandbags" ) );
 			} else if ( Input.Pressed( InputButton.Slot2 ) )
 			{
-				SelectBuildable( Items.Find<BuildableItem>( "buildable.sandbags" ) );
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.fence" ) );
+			} else if ( Input.Pressed( InputButton.Slot3 ) )
+			{
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.fencelong" ) );
+			} else if ( Input.Pressed( InputButton.Slot4 ) )
+			{
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.fencegate" ) );
+			} else if ( Input.Pressed( InputButton.Slot5 ) )
+			{
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.fencedoor" ) );
 			}
 
 			var angDiff = Input.Down( InputButton.Walk ) ? 5f : 15f;
