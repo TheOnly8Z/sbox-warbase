@@ -1,9 +1,10 @@
 ﻿using Sandbox;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Warbase;
 
-partial class WarbasePlayer : Player
+public partial class WarbasePlayer : Player
 {
 
 	private static Color _previewGood = new Color( 0.5f, 1f, 0.5f, 0.75f );
@@ -242,6 +243,9 @@ partial class WarbasePlayer : Player
 			} else if ( Input.Pressed( InputButton.Slot5 ) )
 			{
 				SelectBuildable( Items.Find<BuildableItem>( "buildable.fencedoor" ) );
+			} else if ( Input.Pressed( InputButton.Slot6 ) )
+			{
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.bastion" ) );
 			}
 
 			var angDiff = Input.Down( InputButton.Walk ) ? 5f : 15f;
@@ -428,5 +432,10 @@ partial class WarbasePlayer : Player
 		//DebugOverlay.Sphere( pos, 5.0f, Color.Red, false, 50.0f );
 
 		DamageIndicator.Current?.OnHit( pos );
+	}
+
+	public IEnumerable<BuildableEntity> GetBuildables()
+	{
+		return All.OfType<BuildableEntity>().Where( i => i.CheckOwner(this) );
 	}
 }

@@ -42,7 +42,7 @@ namespace Warbase
 
 		public static Sweeper Sweeper;
 
-		public static PlacementInfo TrySuitablePlacement(Player player, BuildableItem item, Vector3 pos, Rotation rot)
+		public static PlacementInfo TrySuitablePlacement(WarbasePlayer player, BuildableItem item, Vector3 pos, Rotation rot)
 		{
 			BBox box = item.Model.PhysicsBounds;
 
@@ -59,6 +59,55 @@ namespace Warbase
 						.Ignore( Sweeper )
 						.Run();
 			pos = tr.EndPosition; // + Vector3.Up * raise;
+
+			// Check if there are any buildings we can snap to
+			if (item.SnapPoints.Count > 0)
+			{
+				Transform ourTransform = new Transform( pos, rot );
+
+				Vector3 delta = Vector3.Zero;
+				float minDist = -1f;
+
+				foreach (BuildableEntity entity in player.GetBuildables())
+				{
+					// Skip entities that don't have snap points
+					if ( entity.Item == null || entity.Item.SnapPoints.Count == 0 )
+						continue;
+
+					var skip = false;
+
+					foreach (SnapPoint snap in entity.Item.SnapPoints)
+					{
+						foreach ( SnapPoint snap2 in item.SnapPoints )
+						{
+							if ( snap.Flags == snap2.Flags )
+							{
+								var pos1 = ourTransform.PointToWorld( snap2.Position );
+								var pos2 = entity.Transform.PointToWorld( snap.Position );
+								var dist = pos2.Distance(pos1);
+								if ( dist <= 16 && (minDist < 0 || dist < minDist) )
+								{
+									// Calculate the difference we need to move to make these two points snap
+									delta = pos2 - pos1;
+									minDist = dist;
+								} else if ( dist > 256 )
+								{
+									// Absolutely no chance any snap points on the entity will ever snap to us
+									skip = true;
+									break;
+								}
+							}
+						}
+						if ( skip )
+							break;
+					}
+				}
+
+				if ( minDist >= 0 )
+				{
+					pos = pos + delta;
+				}
+			}
 
 			// Is the trace too steep?
 			if ( tr.Normal.Dot( Vector3.Up ) < 0.75f )

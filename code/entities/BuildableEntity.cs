@@ -37,11 +37,12 @@ namespace Warbase
 			{
 				foreach ( SnapPoint snapPoint in Item.SnapPoints )
 				{
-					DebugOverlay.Sphere( Transform.PointToWorld( snapPoint.Position ), 4f, Color.Green );
+					DebugOverlay.Sphere( Transform.PointToWorld( snapPoint.Position ), 4f, Color.Green, false );
 				}
 			}
 		}
 		*/
+		
 
 		protected override void OnItemChanged( BuildableItem item, BuildableItem oldItem )
 		{

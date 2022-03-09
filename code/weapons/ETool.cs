@@ -7,11 +7,10 @@ partial class ETool : BaseDmWeapon
 { 
 	public override string ViewModelPath => "weapons/rust_pistol/v_rust_pistol.vmdl";
 	public override AmmoType AmmoType => AmmoType.None;
-	public override float PrimaryRate => 1f;
+	public override float PrimaryRate => 3f;
 	public override float SecondaryRate => 1.0f;
 	public override int ClipSize => -1;
-
-	public override int Bucket => 1;
+	public override int Bucket => 0;
 
 	public override void Spawn()
 	{
@@ -31,18 +30,11 @@ partial class ETool : BaseDmWeapon
 		TimeSincePrimaryAttack = 0;
 		TimeSinceSecondaryAttack = 0;
 
-		if ( !TakeAmmo( 1 ) )
-		{
-			DryFire();
-			return;
-		}
-
-
 		//
 		// Tell the clients to play the shoot effects
 		//
 		ShootEffects();
-		PlaySound( "rust_pistol.shoot" );
+		// PlaySound( "rust_pistol.shoot" );
 
 		Rand.SetSeed( Time.Tick );
 
