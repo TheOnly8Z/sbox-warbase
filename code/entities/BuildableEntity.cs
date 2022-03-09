@@ -30,7 +30,7 @@ namespace Warbase
 
 		protected override void OnItemChanged( BuildableItem item, BuildableItem oldItem )
 		{
-			SetModel( Item.ModelPath );
+			SetModel( Item.Model.Name );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
 
 			if ( oldItem == null )
@@ -41,7 +41,7 @@ namespace Warbase
 				RenderColor = _colorBlueprint;
 
 				CollisionGroup = item.CollisionGroup;
-				MoveType = item.MoveType;
+				MoveType = MoveType.None;
 			}
 		}
 
@@ -86,10 +86,8 @@ namespace Warbase
 
 		public override void TakeDamage( DamageInfo info )
 		{
-			if ( info.Attacker == Owner ) return;
-
-			// TODO: block damage if same team
-
+			// TODO variable to ignore this so we can test damage
+			if ( info.Attacker is Player && CheckOwner( info.Attacker as Player ) ) return;
 
 			info.Damage *= GetResistance( info.Flags );
 			base.TakeDamage( info );

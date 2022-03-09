@@ -8,7 +8,7 @@ using Sandbox;
 
 namespace Warbase
 {
-	public partial class ItemEntity<T> : AnimEntity, IOwnable where T : BaseItem
+	public partial class ItemEntity<T> : AnimEntity, IOwnableEntity, IValuableEntity where T : BaseItem
 	{
 		[Net] public Player Player { get; private set; }
 		[Net, Change] public uint ItemNetworkId { get; private set; }
@@ -56,6 +56,14 @@ namespace Warbase
 		{
 			// TODO: team ownership
 			return player == Player;
+		}
+		public int GetWorth()
+		{
+			if ( Item != null )
+			{
+				return Item.Worth;
+			}
+			return 0;
 		}
 	}
 }

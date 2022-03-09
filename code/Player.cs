@@ -106,7 +106,7 @@ partial class WarbasePlayer : Player
 				BuildPreview.CollisionGroup = CollisionGroup.Never;
 				BuildPreview.RenderColor = _previewGood;
 			}
-			BuildPreview.SetModel( _selected.ModelPath );
+			BuildPreview.SetModel( _selected.Model.Name );
 		}
 	}
 
@@ -139,8 +139,21 @@ partial class WarbasePlayer : Player
 	{
 		if ( !IsServer || !InBuildMode || _selected == null ) return;
 
+		var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * BuildingHelper.MaxPlacementDistance )
+			.Ignore( this )
+			.Run();
+		PlacementInfo placementInfo = BuildingHelper.TrySuitablePlacement( this, _selected, tr.EndPosition, Rotation.FromYaw( PreviewYawOffset ) );
+
+		// Bamboozled by the client!
+		if ( !placementInfo.IsSuitable() ) return;
+
 		BuildableEntity buildable;
 		buildable = Items.Create(this, _selected);
+
+		buildable.Position = placementInfo.pos;
+		buildable.Rotation = placementInfo.rot;
+
+		/*
 		var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 500 )
 					.Ignore( this )
 					.Ignore( BuildPreview )
@@ -152,6 +165,7 @@ partial class WarbasePlayer : Player
 					.Run();
 		buildable.Position = tr2.EndPosition;
 		buildable.Rotation = Rotation.FromYaw( PreviewYawOffset );
+		*/
 	}
 
 	public override void Simulate( Client cl )
@@ -232,6 +246,18 @@ partial class WarbasePlayer : Player
 
 			if ( IsClient && BuildPreview != null && BuildPreview.IsValid() )
 			{
+				var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * BuildingHelper.MaxPlacementDistance )
+							.Ignore( this )
+							.Ignore( BuildPreview )
+							.Run();
+				PlacementInfo placementInfo = BuildingHelper.TrySuitablePlacement( this, _selected, tr.EndPosition, Rotation.FromYaw( PreviewYawOffset ) );
+
+				BuildPreview.Position = placementInfo.pos;
+				BuildPreview.Rotation = placementInfo.rot;
+
+				BuildPreview.RenderColor = placementInfo.IsSuitable() ? _previewGood : _previewBad;
+
+				/*
 				var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 500 )
 							.Ignore( this )
 							.Ignore( BuildPreview )
@@ -243,6 +269,7 @@ partial class WarbasePlayer : Player
 							.Run();
 				BuildPreview.Position = tr2.EndPosition;
 				BuildPreview.Rotation = Rotation.FromYaw( PreviewYawOffset );
+				*/
 				// TODO check if location valid
 			}
 

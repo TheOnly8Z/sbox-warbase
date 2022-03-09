@@ -52,7 +52,8 @@ partial class ETool : BaseDmWeapon
 
 		foreach ( var tr in TraceBullet( Owner.EyePosition, Owner.EyePosition + forward * 48, 16 ) )
 		{
-			tr.Surface.DoBulletImpact( tr );
+			if ( tr.Hit )
+				tr.Surface.DoBulletImpact( tr );
 
 			if ( !IsServer ) continue;
 			if ( !tr.Entity.IsValid() ) continue;
@@ -60,7 +61,15 @@ partial class ETool : BaseDmWeapon
 			if (Owner is Player && tr.Entity is BuildableEntity && (tr.Entity as BuildableEntity).CheckOwner(Owner as Player) )
 			{
 				var buildable = tr.Entity as BuildableEntity;
-				buildable.ProgressBuilding( 25f );
+				var item = buildable.Item;
+				if (item.Tier == BuildableTier.Tier0)
+				{
+					buildable.ProgressBuilding( 25f );
+				}
+				else
+				{
+					// Maybe give a warning or play a sound?
+				}
 			} else
 			{
 				var damageInfo = DamageInfo.FromBullet( tr.EndPosition, forward * 100, 15 )
