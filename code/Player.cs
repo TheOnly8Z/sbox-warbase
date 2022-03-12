@@ -15,6 +15,8 @@ public partial class WarbasePlayer : Player
 	public bool SupressPickupNotices { get; private set; }
 	public bool InBuildMode { get; set; }
 
+	public TraceResult EyeTrace { get; private set; }
+
 	// Should be clientside only but idk if anything needs to be different here
 	private AnimEntity BuildPreview;
 	private float PreviewYawOffset = 0f;
@@ -154,6 +156,8 @@ public partial class WarbasePlayer : Player
 		buildable.Position = placementInfo.pos;
 		buildable.Rotation = placementInfo.rot;
 
+		buildable.SetOwner( this );
+
 		/*
 		var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 500 )
 					.Ignore( this )
@@ -236,13 +240,13 @@ public partial class WarbasePlayer : Player
 				SelectBuildable( Items.Find<BuildableItem>( "buildable.fence" ) );
 			} else if ( Input.Pressed( InputButton.Slot3 ) )
 			{
-				SelectBuildable( Items.Find<BuildableItem>( "buildable.fencelong" ) );
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.fence_long" ) );
 			} else if ( Input.Pressed( InputButton.Slot4 ) )
 			{
-				SelectBuildable( Items.Find<BuildableItem>( "buildable.fencegate" ) );
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.fence_gate" ) );
 			} else if ( Input.Pressed( InputButton.Slot5 ) )
 			{
-				SelectBuildable( Items.Find<BuildableItem>( "buildable.fencedoor" ) );
+				SelectBuildable( Items.Find<BuildableItem>( "buildable.fence_door" ) );
 			} else if ( Input.Pressed( InputButton.Slot6 ) )
 			{
 				SelectBuildable( Items.Find<BuildableItem>( "buildable.bastion" ) );
@@ -298,6 +302,8 @@ public partial class WarbasePlayer : Player
 		{
 			SwitchToBestWeapon();
 		}
+
+		EyeTrace = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 10000f ).Ignore( this ).Run();
 	}
 
 	public void SwitchToBestWeapon()

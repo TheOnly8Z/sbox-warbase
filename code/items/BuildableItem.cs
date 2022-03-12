@@ -107,7 +107,7 @@ namespace Warbase
 		public virtual int Skin => 0;
 		public virtual CollisionGroup CollisionGroup => CollisionGroup.Always;
 		/// <summary>
-		/// When checking building placement, shrink the bounding box of the model by this much. 
+		/// When checking building placement, shrink the bounding box of the model by this much (should be negative). 
 		/// </summary>
 		public virtual Vector3 SizeShrink => Vector3.Zero;
 		/// <summary>

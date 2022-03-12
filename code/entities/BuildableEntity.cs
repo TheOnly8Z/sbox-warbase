@@ -20,19 +20,20 @@ namespace Warbase
 
 		private static Color _colorBlueprint = new Color( 1, 1, 1, 0.3f );
 
-		public BuildableState BuildableState;
-		public float Progress; // max is Item.RequiredProgress
+		[Net]
+		public BuildableState BuildableState { get; protected set; }
+
+		[Net]
+		public float Progress { get; protected set; }
 
 		public BuildableEntity() : base()
 		{
 
 		}
 
-		/*
 		[Event.Tick]
 		private void Tick()
 		{
-			Log.Info( Item );
 			if ( Item != null )
 			{
 				foreach ( SnapPoint snapPoint in Item.SnapPoints )
@@ -41,7 +42,7 @@ namespace Warbase
 				}
 			}
 		}
-		*/
+		
 		
 
 		protected override void OnItemChanged( BuildableItem item, BuildableItem oldItem )
@@ -103,7 +104,7 @@ namespace Warbase
 		public override void TakeDamage( DamageInfo info )
 		{
 			// TODO variable to ignore this so we can test damage
-			if ( info.Attacker is Player && CheckOwner( info.Attacker as Player ) ) return;
+			if ( !ConVars.wb_buildable_friendlyfire && info.Attacker is Player && CheckOwner( info.Attacker as Player ) ) return;
 
 			info.Damage *= GetResistance( info.Flags );
 			base.TakeDamage( info );

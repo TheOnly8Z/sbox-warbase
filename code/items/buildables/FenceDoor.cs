@@ -9,7 +9,7 @@ using Sandbox;
 namespace Warbase.Buildables
 {
 	[Library]
-	public partial class FenceDoor : BuildableItem
+	public partial class FenceDoor : DoorItem
 	{
 		// Descriptive
 		public override string Name => "Fence Door";
@@ -18,16 +18,12 @@ namespace Warbase.Buildables
 
 		// Visuals and physics
 		public override Model Model => Model.Load( "models/rust_structures/fences_walls/chainlink_fence_3x3_gate_door.vmdl" );
-		public override List<SnapPoint> SnapPoints => new()
-		{
-			new SnapPoint( SnapFlags.DoorHinge, new Vector3( 0, 16, 0 ) ),
-		};
-
+		public override Vector3 SizeShrink => new Vector3( 48f, 16f, 0 );
 		// Attributes
 		public override int CostMoney => 10;
 		public override float MaxHealth => 150f;
 		public override float RequiredProgress => 50f;
 		public override BuildableTier Tier => BuildableTier.Tier0;
-		public override BuildableFlags Flags => BuildableFlags.EToolBuildable | BuildableFlags.MustSnap;
+		public override BuildableFlags Flags => BuildableFlags.EToolBuildable;
 	}
 }

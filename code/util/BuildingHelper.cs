@@ -61,6 +61,7 @@ namespace Warbase
 			pos = tr.EndPosition; // + Vector3.Up * raise;
 
 			// Check if there are any buildings we can snap to
+			var snapped = false;
 			if (item.SnapPoints.Count > 0)
 			{
 				Transform ourTransform = new Transform( pos, rot );
@@ -90,7 +91,7 @@ namespace Warbase
 									// Calculate the difference we need to move to make these two points snap
 									delta = pos2 - pos1;
 									minDist = dist;
-								} else if ( dist > 256 )
+								} else if ( dist > 500 )
 								{
 									// Absolutely no chance any snap points on the entity will ever snap to us
 									skip = true;
@@ -106,7 +107,13 @@ namespace Warbase
 				if ( minDist >= 0 )
 				{
 					pos = pos + delta;
+					snapped = true;
 				}
+			}
+
+			if (!snapped && item.HasFlag(BuildableFlags.MustSnap))
+			{
+				placementInfo.flags |= PlacementFlags.NeedSnapPoint;
 			}
 
 			// Is the trace too steep?

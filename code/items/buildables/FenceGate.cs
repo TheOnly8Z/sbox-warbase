@@ -9,22 +9,16 @@ using Sandbox;
 namespace Warbase.Buildables
 {
 	[Library]
-	public partial class FenceGate : BuildableItem
+	public partial class FenceGate : DoorFrameItem
 	{
 		// Descriptive
 		public override string Name => "Fence (Gate)";
 		public override string UniqueId => "buildable.fence_gate";
 		public override string Description => "A see-through barrier with a door hole. Cheap and quick to make, but easily destroyed.";
 
-
 		// Visuals and physics
 		public override Model Model => Model.Load( "models/rust_structures/fences_walls/chainlink_fence_3x3_gate.vmdl" );
-
-		public override List<SnapPoint> SnapPoints => new()
-		{
-			new SnapPoint( SnapFlags.DoorHinge, new Vector3( 0, 16, 0 ) ),
-		};
-
+	
 		// Attributes
 		public override int CostMoney => 15;
 		public override float MaxHealth => 150f;

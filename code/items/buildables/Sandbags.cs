@@ -18,7 +18,7 @@ namespace Warbase.Buildables
 
 		// Visuals and physics
 		public override Model Model => Model.Load( "models/rust_props/barricades/barricade.sandbags.vmdl" );
-		public override Vector3 SizeShrink => new Vector3(0, -40, 0);
+		public override Vector3 SizeShrink => new Vector3(0, -60, 0);
 		public override List<SnapPoint> SnapPoints => new()
 		{
 			new SnapPoint( SnapFlags.WallEdge, new Vector3( 0, 48, 0 ) ) ,

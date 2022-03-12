@@ -10,8 +10,13 @@ namespace Warbase
 {
 	public partial class ItemEntity<T> : AnimEntity, IOwnableEntity, IValuableEntity where T : BaseItem
 	{
-		[Net] public Player Player { get; private set; }
 		[Net, Change] public uint ItemNetworkId { get; private set; }
+
+		/// <summary>
+		/// Not to be confused with Entity.Owner.
+		/// </summary>
+		[Net] protected Player PlayerOwner { get; private set; }
+		[Net] protected Team TeamOwner { get; private set; }
 
 		private T _itemCache;
 		public T Item
@@ -26,36 +31,39 @@ namespace Warbase
 
 		public void ClearItemCache() => _itemCache = null;
 
-		public void Assign( Player player, T item )
+		public void Assign( T item )
 		{
 			Host.AssertServer();
 
 			var oldItem = Item;
 
-			Player = player;
 			ItemNetworkId = item.NetworkId;
 
 			ClearItemCache();
 			OnItemChanged( item, oldItem );
-			OnPlayerAssigned( player );
 		}
 
 		protected virtual void OnItemChanged( T item, T oldItem ) { }
-		protected virtual void OnPlayerAssigned( Player player ) { }
 		protected virtual void OnItemNetworkIdChanged()
 		{
 			ClearItemCache();
 		}
 
+		// Interface stuff
+
+		public bool CheckOwner( Player player ) => TeamOwner != null ? TeamOwner.HasPlayer(player ) : player == PlayerOwner;
+		public bool IsOwnedByTeam() => TeamOwner != null;
+		public bool IsOwnedByPlayer() => TeamOwner == null && PlayerOwner != null;
+		public bool HasOwner() => TeamOwner != null || PlayerOwner != null;
+		public Player GetOwnerPlayer() => PlayerOwner;
+		public Team GetOwnerTeam() => TeamOwner;
 		public void SetOwner( Player player )
 		{
-			Player = player;
-			OnPlayerAssigned( player );
+			PlayerOwner = player;
 		}
-		public bool CheckOwner( Player player )
+		public void SetOwner( Team team )
 		{
-			// TODO: team ownership
-			return player == Player;
+			TeamOwner = team;
 		}
 		public int GetWorth()
 		{

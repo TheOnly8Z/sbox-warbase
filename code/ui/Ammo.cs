@@ -20,7 +20,7 @@ public class Ammo : Panel
 		if ( player == null ) return;
 
 		var weapon = player.ActiveChild as BaseDmWeapon;
-		SetClass( "active", weapon != null );
+		SetClass( "active", weapon == null ? false : weapon.AmmoType == AmmoType.None );
 
 		if ( weapon == null ) return;
 

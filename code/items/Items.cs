@@ -61,7 +61,7 @@ namespace Warbase
 			else
 				entity = Library.Create<BuildableEntity>( item.Entity );
 
-			entity.Assign( player, item );
+			entity.Assign( item );
 
 			return entity;
 		}
