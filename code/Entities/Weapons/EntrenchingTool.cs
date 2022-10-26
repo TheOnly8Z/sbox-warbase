@@ -1,9 +1,9 @@
 ﻿using Warbase;
 
-[Library( "dm_crowbar" ), HammerEntity]
+[Library( "wb_etool" ), HammerEntity]
 [EditorModel( "models/dm_crowbar.vmdl" )]
-[Title( "Crowbar" ), Category( "Weapons" )]
-partial class Crowbar : DeathmatchWeapon
+[Title( "Entrenching Tool" ), Category( "Weapons" )]
+partial class EntrenchingTool : DeathmatchWeapon
 {
 	public static Model WorldModel = Model.Load( "models/dm_crowbar.vmdl" );
 	public override string ViewModelPath => "models/v_dm_crowbar.vmdl";
@@ -43,19 +43,37 @@ partial class Crowbar : DeathmatchWeapon
 		forward += (Vector3.Random + Vector3.Random + Vector3.Random + Vector3.Random) * 0.1f;
 		forward = forward.Normal;
 
-		foreach ( var tr in TraceBullet( Owner.EyePosition, Owner.EyePosition + forward * 70, 15 ) )
+
+		foreach ( var tr in TraceBullet( Owner.EyePosition, Owner.EyePosition + forward * 48, 16 ) )
 		{
-			tr.Surface.DoBulletImpact( tr );
+			if ( tr.Hit )
+				tr.Surface.DoBulletImpact( tr );
 
 			if ( !IsServer ) continue;
 			if ( !tr.Entity.IsValid() ) continue;
 
-			var damageInfo = DamageInfo.FromBullet( tr.EndPosition, forward * 32, 25 )
-				.UsingTraceResult( tr )
-				.WithAttacker( Owner )
-				.WithWeapon( this );
+			if ( Owner is Player && tr.Entity is BuildableEntity && (tr.Entity as BuildableEntity).CheckOwner( Owner as Player ) )
+			{
+				var buildable = tr.Entity as BuildableEntity;
+				var item = buildable.Item;
+				if ( item.HasFlag( BuildableFlags.EToolBuildable ) )
+				{
+					buildable.ProgressBuilding( 25f );
+				}
+				else
+				{
+					// Maybe give a warning or play a sound?
+				}
+			}
+			else
+			{
+				var damageInfo = DamageInfo.FromBullet( tr.EndPosition, forward * 100, 15 )
+					.UsingTraceResult( tr )
+					.WithAttacker( Owner )
+					.WithWeapon( this );
 
-			tr.Entity.TakeDamage( damageInfo );
+				tr.Entity.TakeDamage( damageInfo );
+			}
 		}
 		ViewModelEntity?.SetAnimParameter( "attack_has_hit", true );
 		ViewModelEntity?.SetAnimParameter( "attack", true );

@@ -238,16 +238,3 @@ armourhud
         opacity: 0.1;
     }
 }
-
-.game-end
-{
-    chatbox, .top-middle
-    {
-        z-index: 1000;
-    }
-
-    inventorybar, .bottom-right, .bottom-left
-    {
-        display: none;
-    }
-}

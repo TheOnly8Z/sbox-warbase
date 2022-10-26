@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sandbox.Interfaces
+namespace Warbase
 {
 	/*
-	 * Entity can be owned by a player or a team.
+	 * Entity can be owned by a player and/or a team.
 	 */
 	public interface IOwnable
 	{

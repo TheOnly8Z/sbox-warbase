@@ -1,6 +1,6 @@
 ﻿using Sandbox.UI;
 
-public partial class KillFeed : Sandbox.UI.KillFeed
+public partial class KillFeed : Warbase.KillFeed
 {
 	public override Panel AddEntry( long lsteamid, string left, long rsteamid, string right, string method )
 	{

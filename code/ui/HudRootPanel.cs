@@ -29,8 +29,8 @@ public class HudRootPanel : RootPanel
 	{
 		base.Tick();
 
-		SetClass( "game-end", DeathmatchGame.CurrentState == DeathmatchGame.GameStates.GameEnd );
-		SetClass( "game-warmup", DeathmatchGame.CurrentState == DeathmatchGame.GameStates.Warmup );
+		//SetClass( "game-end", DeathmatchGame.CurrentState == DeathmatchGame.GameStates.GameEnd );
+		//SetClass( "game-warmup", DeathmatchGame.CurrentState == DeathmatchGame.GameStates.Warmup );
 	}
 
 	protected override void UpdateScale( Rect screenSize )

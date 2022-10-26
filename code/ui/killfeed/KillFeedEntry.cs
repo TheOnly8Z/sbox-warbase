@@ -5,7 +5,7 @@ using Sandbox.UI.Construct;
 using System;
 using System.Threading.Tasks;
 
-namespace Sandbox.UI
+namespace Warbase
 {
 	public partial class KillFeedEntry : Panel
 	{

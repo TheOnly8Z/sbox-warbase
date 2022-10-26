@@ -32,11 +32,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\_s&box\\dm98\\code\\dm98.csproj",
-      "projectName": "dm98",
-      "projectPath": "D:\\_s&box\\dm98\\code\\dm98.csproj",
+      "projectUniqueName": "D:\\_s&box\\warbase\\code\\warbase.csproj",
+      "projectName": "warbase",
+      "projectPath": "D:\\_s&box\\warbase\\code\\warbase.csproj",
       "packagesPath": "C:\\Users\\8Z\\.nuget\\packages\\",
-      "outputPath": "D:\\_s&box\\dm98\\code\\obj\\",
+      "outputPath": "D:\\_s&box\\warbase\\code\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\8Z\\AppData\\Roaming\\NuGet\\NuGet.Config",

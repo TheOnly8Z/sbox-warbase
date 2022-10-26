@@ -1,4 +1,5 @@
-﻿public partial class DeathmatchPlayer : Player
+﻿using Warbase;
+public partial class DeathmatchPlayer : Player
 {
 	TimeSince timeSinceDropped;
 
@@ -9,9 +10,21 @@
 	public float MaxHealth { get; set; } = 100;
 
 	public bool SupressPickupNotices { get; private set; }
+	public bool InBuildMode { get; set; }
 
 	public int ComboKillCount { get; set; } = 0;
 	public TimeSince TimeSinceLastKill { get; set; }
+
+
+	// Should be clientside only but idk if anything needs to be different here
+	private AnimatedEntity BuildPreview;
+	private float PreviewYawOffset = 0f;
+	private float PreviewGridSize = 4f;
+
+	private BuildableItem _selected;
+
+	private static Color _previewGood = new Color( 0.5f, 1f, 0.5f, 0.75f );
+	private static Color _previewBad = new Color( 1f, 0.5f, 0.5f, 0.75f );
 
 	public DeathmatchPlayer()
 	{
@@ -24,9 +37,9 @@
 
 		Controller = new WalkController
 		{
-			WalkSpeed = 270,
-			SprintSpeed = 100,
-			DefaultSpeed = 270,
+			WalkSpeed = 125,
+			SprintSpeed = 270,
+			DefaultSpeed = 150,
 			AirAcceleration = 10,
 
 		};
@@ -46,10 +59,21 @@
 		SupressPickupNotices = true;
 
 		Inventory.DeleteContents();
-		Inventory.Add( new Crowbar() );
-		Inventory.Add( new Pistol(), true );
+		Inventory.Add( new EntrenchingTool() );
 
-		GiveAmmo( AmmoType.Pistol, 25 );
+		GiveAmmo( AmmoType.Pistol, 1000 );
+		GiveAmmo( AmmoType.Python, 1000 );
+		GiveAmmo( AmmoType.Buckshot, 1000 );
+		GiveAmmo( AmmoType.Crossbow, 1000 );
+		GiveAmmo( AmmoType.Grenade, 1000 );
+		GiveAmmo( AmmoType.Tripmine, 1000 );
+
+		Inventory.Add( new Python() );
+		Inventory.Add( new Shotgun() );
+		Inventory.Add( new SMG() );
+		Inventory.Add( new Crossbow() );
+		Inventory.Add( new GrenadeWeapon() );
+		Inventory.Add( new TripmineWeapon() );
 
 		SupressPickupNotices = false;
 		Health = 100;
@@ -132,6 +156,95 @@
 	}
 
 
+	public void SelectBuildable( BuildableItem item )
+	{
+
+		_selected = item;
+
+		if ( !IsClient )
+			return;
+
+		if ( item == null )
+		{
+			if ( BuildPreview != null && BuildPreview.IsValid() )
+			{
+				BuildPreview.Delete();
+				BuildPreview = null;
+			}
+		}
+		else if ( InBuildMode )
+		{
+			if ( BuildPreview == null || !BuildPreview.IsValid() )
+			{
+				BuildPreview = new AnimatedEntity( _selected.Model.Name );
+				BuildPreview.PhysicsEnabled = false;
+				BuildPreview.CollisionGroup = CollisionGroup.Never;
+				BuildPreview.RenderColor = _previewGood;
+			}
+			BuildPreview.SetModel( _selected.Model.Name );
+		}
+	}
+
+	public void SetBuildMode( bool enabled )
+	{
+		if ( enabled && !InBuildMode )
+		{
+			InBuildMode = true;
+			ActiveChild = null;
+
+			if ( IsClient )
+			{
+				SelectBuildable( _selected );
+			}
+
+
+		}
+		else if ( !enabled && InBuildMode )
+		{
+			InBuildMode = false;
+			if ( IsClient && BuildPreview != null && BuildPreview.IsValid() )
+			{
+				BuildPreview.Delete();
+				BuildPreview = null;
+			}
+			SwitchToBestWeapon();
+		}
+	}
+
+	public void MakeBuilding()
+	{
+		if ( !IsServer || !InBuildMode || _selected == null ) return;
+
+		var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * BuildingHelper.MaxPlacementDistance )
+			.Ignore( this )
+			.Run();
+		PlacementInfo placementInfo = BuildingHelper.TrySuitablePlacement( this, _selected, tr.EndPosition, Rotation.FromYaw( PreviewYawOffset ) );
+
+		// Bamboozled by the client!
+		if ( !placementInfo.IsSuitable() ) return;
+
+		BuildableEntity buildable;
+		buildable = ItemLibrary.Create( this, _selected );
+
+		buildable.Position = placementInfo.pos;
+		buildable.Rotation = placementInfo.rot;
+
+		buildable.SetOwner( this );
+
+		/*
+		var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 500 )
+					.Ignore( this )
+					.Ignore( BuildPreview )
+					.Run();
+		var pos = tr.EndPosition; // .SnapToGrid( PreviewGridSize );
+		var tr2 = Trace.Ray( pos + Vector3.Up * 4f, pos + Vector3.Down * 100f )
+					.Ignore( this )
+					.Ignore( BuildPreview )
+					.Run();
+		buildable.Position = tr2.EndPosition;
+		buildable.Rotation = Rotation.FromYaw( PreviewYawOffset );
+		*/
+	}
 	public override void Simulate( Client cl )
 	{
 		if ( DeathmatchGame.CurrentState == DeathmatchGame.GameStates.GameEnd )
@@ -142,7 +255,7 @@
 		//
 		// Input requested a weapon switch
 		//
-		if ( Input.ActiveChild != null )
+		if ( Input.ActiveChild != null && !InBuildMode )
 		{
 			ActiveChild = Input.ActiveChild;
 		}
@@ -177,6 +290,92 @@
 				timeSinceDropped = 0;
 				SwitchToBestWeapon();
 			}
+		}
+
+
+		if ( Input.Pressed( InputButton.Grenade ) )
+		{
+			SetBuildMode( !InBuildMode );
+
+			Log.Info( ItemLibrary.Table == null );
+
+			foreach ( var i in ItemLibrary.Table )
+			{
+				Log.Info(i);
+			}
+		}
+
+		if ( InBuildMode )
+		{
+			// TODO: actual buildable selection screen
+			if ( Input.Pressed( InputButton.PrimaryAttack ) )
+			{
+				MakeBuilding();
+			}
+			else if ( Input.Pressed( InputButton.Slot1 ) )
+			{
+				SelectBuildable( ItemLibrary.Find<BuildableItem>( "buildable.sandbags" ) );
+			}
+			else if ( Input.Pressed( InputButton.Slot2 ) )
+			{
+				SelectBuildable( ItemLibrary.Find<BuildableItem>( "buildable.fence" ) );
+			}
+			else if ( Input.Pressed( InputButton.Slot3 ) )
+			{
+				SelectBuildable( ItemLibrary.Find<BuildableItem>( "buildable.fence_long" ) );
+			}
+			else if ( Input.Pressed( InputButton.Slot4 ) )
+			{
+				SelectBuildable( ItemLibrary.Find<BuildableItem>( "buildable.fence_gate" ) );
+			}
+			else if ( Input.Pressed( InputButton.Slot5 ) )
+			{
+				SelectBuildable( ItemLibrary.Find<BuildableItem>( "buildable.fence_door" ) );
+			}
+			else if ( Input.Pressed( InputButton.Slot6 ) )
+			{
+				SelectBuildable( ItemLibrary.Find<BuildableItem>( "buildable.bastion" ) );
+			}
+
+			var angDiff = Input.Down( InputButton.Walk ) ? 5f : 15f;
+			if ( Input.Down( InputButton.SlotNext ) || Input.MouseWheel > 0 )
+			{
+				PreviewYawOffset = PreviewYawOffset + angDiff;
+			}
+			else if ( Input.Down( InputButton.SlotPrev ) || Input.MouseWheel < 0 )
+			{
+				PreviewYawOffset = PreviewYawOffset - angDiff;
+			}
+
+			if ( IsClient && _selected != null && BuildPreview != null && BuildPreview.IsValid() )
+			{
+				var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * BuildingHelper.MaxPlacementDistance )
+							.Ignore( this )
+							.Ignore( BuildPreview )
+							.Run();
+				PlacementInfo placementInfo = BuildingHelper.TrySuitablePlacement( this, _selected, tr.EndPosition, Rotation.FromYaw( PreviewYawOffset ) );
+
+				BuildPreview.Position = placementInfo.pos;
+				BuildPreview.Rotation = placementInfo.rot;
+
+				BuildPreview.RenderColor = placementInfo.IsSuitable() ? _previewGood : _previewBad;
+
+				/*
+				var tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 500 )
+							.Ignore( this )
+							.Ignore( BuildPreview )
+							.Run();
+				var pos = tr.EndPosition; // .SnapToGrid( PreviewGridSize );
+				var tr2 = Trace.Ray( pos + Vector3.Up * 4f, pos + Vector3.Down * 100f )
+							.Ignore( this )
+							.Ignore( BuildPreview )
+							.Run();
+				BuildPreview.Position = tr2.EndPosition;
+				BuildPreview.Rotation = Rotation.FromYaw( PreviewYawOffset );
+				*/
+				// TODO check if location valid
+			}
+
 		}
 
 		SimulateActiveChild( cl, ActiveChild );
@@ -438,4 +637,8 @@
 		}
 	}
 
+	public IEnumerable<BuildableEntity> GetBuildables()
+	{
+		return All.OfType<BuildableEntity>().Where( i => i.CheckOwner( this ) );
+	}
 }

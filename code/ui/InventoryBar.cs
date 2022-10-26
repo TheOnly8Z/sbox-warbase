@@ -45,8 +45,6 @@ public class InventoryBar : Panel
 	[Event.BuildInput]
 	public void ProcessClientInput( InputBuilder input )
 	{
-		if ( DeathmatchGame.CurrentState != DeathmatchGame.GameStates.Live ) return;
-
 		bool wantOpen = IsOpen;
 		var localPlayer = Local.Pawn as Player;
 
@@ -60,7 +58,7 @@ public class InventoryBar : Panel
 		wantOpen = wantOpen || input.Pressed( InputButton.Slot5 );
 		wantOpen = wantOpen || input.Pressed( InputButton.Slot6 );
 
-		if ( Weapons.Count == 0 )
+		if ( Weapons.Count == 0 || (Local.Pawn as DeathmatchPlayer).InBuildMode )
 		{
 			IsOpen = false;
 			return;

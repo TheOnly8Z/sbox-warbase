@@ -1,4 +1,6 @@
-﻿namespace Sandbox.UI
+﻿using Sandbox.UI;
+
+namespace Warbase
 {
 	public static class PanelExtension
 	{

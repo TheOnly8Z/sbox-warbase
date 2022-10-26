@@ -4,6 +4,7 @@ global using System;
 global using System.Collections.Generic;
 global using System.Linq;
 global using System.Threading.Tasks;
+using Warbase;
 
 /// <summary>
 /// This is the heart of the gamemode. It's responsible
@@ -26,13 +27,14 @@ partial class DeathmatchGame : Game
 
 			// _ = GameLoopAsync();
 		}
+
+		ItemLibrary.Initialize();
+
 	}
 
 	public override void PostLevelLoaded()
 	{
 		base.PostLevelLoaded();
-
-		ItemRespawn.Init();
 	}
 
 	public override void ClientJoined( Client cl )
@@ -211,7 +213,7 @@ partial class DeathmatchGame : Game
 	[ClientRpc]
 	public override void OnKilledMessage( long leftid, string left, long rightid, string right, string method )
 	{
-		Sandbox.UI.KillFeed.Current?.AddEntry( leftid, left, rightid, right, method );
+		Warbase.KillFeed.Current?.AddEntry( leftid, left, rightid, right, method );
 	}
 
 	public override void RenderHud()
